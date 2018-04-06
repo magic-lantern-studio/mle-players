@@ -1,0 +1,77 @@
+/** @defgroup MlePlayer Magic Lantern Rehearsal Player */
+
+/**
+ * @file RehearsalPlayer.idl
+ * @ingroup MlePlayer
+ *
+ * This file is the IDL source for RehearsalPlayer.dll.
+ * This file will be processed by the MIDL tool to
+ * produce the type library (RehearsalPlayer.tlb) and marshalling code.
+ *
+ * @author Mark S. Millard
+ * @date May 5, 2003
+ */
+
+// COPYRIGHT_BEGIN
+//
+//  Copyright (C) 2000-2007  Wizzer Works
+//
+//  Wizzer Works makes available all content in this file ("Content").
+//  Unless otherwise indicated below, the Content is provided to you
+//  under the terms and conditions of the Common Public License Version 1.0
+//  ("CPL"). A copy of the CPL is available at
+//
+//      http://opensource.org/licenses/cpl1.0.php
+//
+//  For purposes of the CPL, "Program" will mean the Content.
+//
+//  For information concerning this Makefile, contact Mark S. Millard,
+//  of Wizzer Works at msm@wizzerworks.com.
+//
+//  More information concerning Wizzer Works may be found at
+//
+//      http://www.wizzerworks.com
+//
+// COPYRIGHT_END
+
+import "oaidl.idl";
+import "ocidl.idl";
+#include "olectl.h"
+	
+
+	[
+		object,
+		uuid(89CF893A-2A69-48A4-914C-A34229E3D160),
+		dual,
+		helpstring("IAuStage Interface"),
+		pointer_default(unique)
+	]
+	interface IAuStage : IDispatch
+	{
+		[id(1), helpstring("method init")] HRESULT init([in] BSTR cmdline);
+		[id(2), helpstring("method run")] HRESULT run();
+		[id(3), helpstring("method cleanup")] HRESULT cleanup();
+		[id(4), helpstring("method isRunning")] HRESULT isRunning([out] BOOL *running);
+		[id(5), helpstring("method setDigitalWorkprint")] HRESULT setDigitalWorkprint([in] BSTR dwp);
+		[id(6), helpstring("method startPlayer")] HRESULT startPlayer([in] BSTR cmdline);
+	};
+
+[
+	uuid(28D12139-7BDC-4D94-9386-F8278AA0AF7A),
+	version(1.0),
+	helpstring("RehearsalPlayer 1.0 Type Library")
+]
+library REHEARSALPLAYERLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(CBD3BD50-9710-4179-812F-4053E7BB3111),
+		helpstring("AuStage Class")
+	]
+	coclass AuStage
+	{
+		[default] interface IAuStage;
+	};
+};

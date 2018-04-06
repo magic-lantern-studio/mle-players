@@ -1,0 +1,14 @@
+#DWP 1.0 ascii
+( Include $MLE_WORKPRINTS/workprints/MleIv2dSet.wpf )
+( Stage MyStage MleIvStage
+  ( Set 2dSet Mle2dSet
+    ( Property position MlVector2 0.0 0.0 )
+    ( Property size MlVector2 640.0 480.0 )
+  )
+)
+( Scene scene1 MleScene
+  ( HeaderFile mle/MleScene.h )
+  ( Group group1 MleGroup
+    ( HeaderFile mle/MleGroup.h )
+  )
+)

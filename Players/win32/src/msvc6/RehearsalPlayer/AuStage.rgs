@@ -1,0 +1,32 @@
+HKCR
+{
+	RehearsalPlayer.AuStage.1 = s 'AuStage Class'
+	{
+		CLSID = s '{CBD3BD50-9710-4179-812F-4053E7BB3111}'
+	}
+	RehearsalPlayer.AuStage = s 'AuStage Class'
+	{
+		CLSID = s '{CBD3BD50-9710-4179-812F-4053E7BB3111}'
+		CurVer = s 'RehearsalPlayer.AuStage.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {CBD3BD50-9710-4179-812F-4053E7BB3111} = s 'AuStage Class'
+		{
+			ProgID = s 'RehearsalPlayer.AuStage.1'
+			VersionIndependentProgID = s 'RehearsalPlayer.AuStage'
+			ForceRemove 'Programmable'
+			LocalServer32 = s '%MODULE%'
+			val AppID = s '{CEBB600D-8894-4D1F-8427-3B8245CE8A37}'
+			ForceRemove 'Control'
+			ForceRemove 'Insertable'
+			ForceRemove 'ToolboxBitmap32' = s '%MODULE%, 101'
+			'MiscStatus' = s '0'
+			{
+			    '1' = s '131473'
+			}
+			'TypeLib' = s '{28D12139-7BDC-4D94-9386-F8278AA0AF7A}'
+			'Version' = s '1.0'
+		}
+	}
+}

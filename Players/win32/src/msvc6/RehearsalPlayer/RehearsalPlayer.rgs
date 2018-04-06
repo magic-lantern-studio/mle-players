@@ -1,0 +1,11 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		{CEBB600D-8894-4D1F-8427-3B8245CE8A37} = s 'RehearsalPlayer'
+		'RehearsalPlayer.EXE'
+		{
+			val AppID = s {CEBB600D-8894-4D1F-8427-3B8245CE8A37}
+		}
+	}
+}

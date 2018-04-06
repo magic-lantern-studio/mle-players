@@ -1,0 +1,34 @@
+HKCR
+{
+	RehearsalPlayer.AuStage.1 = s 'AuStage Class'
+	{
+		CLSID = s '{65C00DBE-B4E9-442E-AF68-513887FDDA90}'
+	}
+	RehearsalPlayer.AuStage = s 'AuStage Class'
+	{
+		CLSID = s '{65C00DBE-B4E9-442E-AF68-513887FDDA90}'
+		CurVer = s 'RehearsalPlayer.AuStage.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {65C00DBE-B4E9-442E-AF68-513887FDDA90} = s 'AuStage Class'
+		{
+			ProgID = s 'RehearsalPlayer.AuStage.1'
+			VersionIndependentProgID = s 'RehearsalPlayer.AuStage'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			ForceRemove 'Control'
+			ForceRemove 'ToolboxBitmap32' = s '%MODULE%, 102'
+			'MiscStatus' = s '0'
+			{
+			    '1' = s '%OLEMISC%'
+			}
+			'TypeLib' = s '{D2A024F0-2F7C-47EB-96C0-4EEA28DB8515}'
+			'Version' = s '1.0'
+		}
+	}
+}

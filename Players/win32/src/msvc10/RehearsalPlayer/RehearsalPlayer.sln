@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RehearsalPlayer", "RehearsalPlayer.vcxproj", "{4A7AF354-F688-40E4-830D-ACA5DEBE1401}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RehearsalPlayerPS", "RehearsalPlayerPS.vcxproj", "{44872B48-40E9-41E3-9942-0BDF4C0EF9E2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A7AF354-F688-40E4-830D-ACA5DEBE1401}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4A7AF354-F688-40E4-830D-ACA5DEBE1401}.Debug|Win32.Build.0 = Debug|Win32
+		{4A7AF354-F688-40E4-830D-ACA5DEBE1401}.Debug|x64.ActiveCfg = Debug|x64
+		{4A7AF354-F688-40E4-830D-ACA5DEBE1401}.Debug|x64.Build.0 = Debug|x64
+		{4A7AF354-F688-40E4-830D-ACA5DEBE1401}.Release|Win32.ActiveCfg = Release|Win32
+		{4A7AF354-F688-40E4-830D-ACA5DEBE1401}.Release|Win32.Build.0 = Release|Win32
+		{4A7AF354-F688-40E4-830D-ACA5DEBE1401}.Release|x64.ActiveCfg = Release|x64
+		{4A7AF354-F688-40E4-830D-ACA5DEBE1401}.Release|x64.Build.0 = Release|x64
+		{44872B48-40E9-41E3-9942-0BDF4C0EF9E2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{44872B48-40E9-41E3-9942-0BDF4C0EF9E2}.Debug|x64.ActiveCfg = Debug|x64
+		{44872B48-40E9-41E3-9942-0BDF4C0EF9E2}.Release|Win32.ActiveCfg = Release|Win32
+		{44872B48-40E9-41E3-9942-0BDF4C0EF9E2}.Release|x64.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
