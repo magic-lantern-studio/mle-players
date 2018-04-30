@@ -16,8 +16,8 @@ player_LDADD = \
 	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dColorMapMediaref.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dModelMediaref.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dTextureMapMediaref.so \
-	$(MLE_ROOT)/lib/Mle3dSet.so \
+	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dSet.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/MleIvStage.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/Mle2dRole.so \
-	$(MLE_ROOT)/lib/Mle2dSet.so \
+	$(MLE_ROOT)/lib/mle/rehearsal/Mle2dSet.so \
 	-lCoin -lSoXt -lXmu -lX11 -lXext
