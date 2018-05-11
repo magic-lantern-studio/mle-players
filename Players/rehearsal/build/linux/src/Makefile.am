@@ -13,9 +13,9 @@ player_LDADD = \
 	-L$(MLE_ROOT)/lib/mle/rehearsal -lmlert -lXm -lXt \
 	-L$(MLE_ROOT)/lib -lmleatk -lDWP -lmlmath \
 	-livroles $(MLE_ROOT)/lib/mle/rehearsal/Mle3dRole.so \
-	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dColorMapMediaref.so \
-	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dModelMediaref.so \
-	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dTextureMapMediaref.so \
+	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dColorMapMediaRef.so \
+	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dModelMediaRef.so \
+	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dTextureMapMediaRef.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dSet.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/MleIvStage.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/Mle2dRole.so \
