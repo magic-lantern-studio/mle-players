@@ -11,7 +11,7 @@ player_CPPFLAGS = -DMLE_REHEARSAL -DMLE_NOT_DLL -I$(MLE_ROOT)/include
 # issue with how the parts are implemented.
 player_LDADD = \
 	-L$(MLE_ROOT)/lib/mle/rehearsal -lmlert -lXm -lXt \
-	-L$(MLE_ROOT)/lib -lmleatk -lDWP -lmlmath \
+	-L$(MLE_ROOT)/lib -lmleatk -lDWP -lmlmath -lmlutil \
 	-livroles $(MLE_ROOT)/lib/mle/rehearsal/Mle3dRole.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dColorMapMediaRef.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/Mle3dModelMediaRef.so \
