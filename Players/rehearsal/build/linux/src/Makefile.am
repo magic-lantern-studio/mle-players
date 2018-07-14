@@ -4,7 +4,7 @@ bin_PROGRAMS=player
 player_SOURCES= $(top_srcdir)/../../src/title.cxx $(top_srcdir)/../../src/main.cxx
 
 # Compiler options for player
-player_CPPFLAGS = -DMLE_REHEARSAL -DMLE_NOT_DLL -I$(MLE_ROOT)/include
+player_CPPFLAGS = -DMLE_REHEARSAL -DMLE_DIGITAL_WORKPRINT -DMLE_NOT_DLL -I$(MLE_ROOT)/include
 
 # Libraries for player. The link order of the DSOs is important in order to resolve
 # interdependencies between the stage, sets and roles. This is an architectural
