@@ -99,7 +99,8 @@
 //   (and other interaction) is accessed through a communications object
 //   referenced by the global _mlPlayer.
 extern MLE_RUNTIME_API MlePlayer *_mlPlayer;
-extern MLE_DWP_API MleDwpItem *_mlWorkprint;
+//extern MLE_DWP_API MleDwpItem *_mlWorkprint;
+MleDwpItem *_mlWorkprint;
 
 // XXX this is somewhat of a hack.  Basically, this flag determines when
 // it is safe to go into stage edit mode if you are using a player.  Another
