@@ -15,7 +15,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2017-2018 Wizzer Works
+// Copyright (c) 2003-2018 Wizzer Works
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -154,7 +154,8 @@ InitEnv(int argc,char **argv)
 	// Don't remove, just comment out when not debugging.
 
 #if defined(WIN32)
-	//__asm int 3h;
+	//__asm int 3h; Note that this is not compliant with x64 architecture.
+	__debugbreak();
 #endif /* WIN32 */
 #endif /* MLE_DEBUG */
 
