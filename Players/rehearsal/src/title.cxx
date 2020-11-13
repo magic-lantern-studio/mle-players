@@ -8,14 +8,13 @@
  * and playing it in a standalone player.
  *
  * @author Mark S. Millard
- * @date May 5, 2003
  */
 
 // COPYRIGHT_BEGIN
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2003-2018 Wizzer Works
+// Copyright (c) 2003-2020 Wizzer Works
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,12 +45,16 @@
 
 // Include system header files.
 #include <stdio.h>
-#if defined(__sgi) || defined(__linux__)
+#if defined(__linux__)
 #include <unistd.h>
 //#include <bstring.h>
 #include <sys/time.h>
 #include <time.h>
-#endif /* __sgi */
+#ifdef MLE_SOQT
+#include <QtGlobal>
+#include <QWidget>
+#endif
+#endif /* __linux__ */
 #if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -61,7 +64,7 @@
 #include <Inventor/Win/SoWin.h>
 #endif /** WIN32 */
 
-// Include Magic Lantern header files.
+// Include Magic Lantern Runtime Engine header files.
 #include <mle/mlTypes.h>
 #include <mle/mlErrno.h>
 #include <mle/MleDirector.h>
@@ -84,8 +87,8 @@
 #include <mle/DwpStage.h>
 #include <mle/DwpLoad.h>
 
+// Include Magic Lantern Player header files.
 #include <mle/MlePlayer.h>
-
 #include <mle/MleIvStage.h>
 
 
@@ -116,7 +119,7 @@ static void toolsInitFinished(void *);
 
 
 #if defined(WIN32)
-// XXX - determine if tz parameter can be struct timezone * to match linux.
+// Todo: determine if tz parameter can be struct timezone * to match linux.
 // Timezone is not used, so it is not important that it matches for Windows
 // platform.
 int gettimeofday (struct timeval *tv, void *tz)
@@ -138,11 +141,12 @@ MlBoolean
 InitEnv(int argc,char **argv)
 {
 	// Start a debugger.
-#if defined(__sgi) || defined(__linux__)
+#if defined(__linux__)
 	char *dbxenv = getenv("MLE_DBX");
 	if ( dbxenv && strstr(dbxenv,argv[0]) )
 	{
 		char cmd[128];
+        // Todo: Find a replacement for winterm and dbx.
 		sprintf(cmd,"winterm -c dbx -p %d",getpid());
 		system(cmd);
 		sleep(20);
@@ -214,28 +218,28 @@ InitEnv(int argc,char **argv)
 	    char *stageName, *stageClass;
 	    selectStage(_mlWorkprint, &stageName, &stageClass);
 
-#if defined(__sgi) || defined(__linux__)
+#if defined(__linux__)
 	    // Stage name is used to set LD_LIBRARY_PATH for 
 	    // mlplay processes, so they select correct roles, 
 	    // property roles, sets, etc.
-	    // XXX - use rld root or ld lib path?
+        // Todo: use rld root or ld lib path?
 	    char *currPath = getenv("LD_LIBRARY_PATH");
 	    if (!currPath)
 			currPath = (char *)"";
 	    char addPath[100];
 	    sprintf(addPath, "/usr/local/lib");
-	    // XXX - need a better policy for finding the rehearsal player components.
+        // Todo: need a better policy for finding the rehearsal player components.
 	    // It use to be
 	    //   sprintf(addPath, "/usr/mle/%s/rehearsal", stageName);
 	    // But we should use a linux standard, like
 	    //   sprintf(addPath, "/usr/local/mle/%s/rehearsal", stageName);
 	
 	    // Append addition to existing library path.
-	    // XXX - maybe should prepend ours
+        // Todo: maybe should prepend ours
 	    char *newPath = new char[strlen(currPath)+strlen(addPath) + 50];
 	    sprintf(newPath, "LD_LIBRARY_PATH=%s;%s", currPath, addPath);
 	    putenv(newPath);
-#endif /* __sgi */
+#endif /* __linux__ */
 #if defined(WIN32)
 		char *currPath = getenv("PATH");
 	    if (! currPath)
@@ -266,9 +270,9 @@ InitEnv(int argc,char **argv)
 	    sprintf(s, "%s=mlplay", MLEPLAY_EXEC_MODE);
 	    putenv(s);
 
-#if defined(__sgi) || defined(__linux__)
+#if defined(__linux__)
 	    execvp(argv[0], argv);
-#endif /* __sgi */
+#endif /* __linux__ */
 #if defined(WIN32)
 		_execvp(argv[0], argv);
 #endif /* WIN32 */
@@ -341,7 +345,7 @@ InitEnv(int argc,char **argv)
 			exit(-1);
 	    }
 
-	    // XXX - We probably really want to take this out of here.
+        // Todo: We probably really want to take this out of here.
 	    // Stage initialization
 	    char stageClass[100];
 	    strcpy(stageClass, 
@@ -370,14 +374,22 @@ InitEnv(int argc,char **argv)
 	    MleStage::g_theStage->init();
 	    MleStage::g_theStage->setEditing(0);
 
-#if defined(__sgi) || defined(__linux__)
+#if defined(__linux__)
+#ifdef Q_OS_UNIX
+        QWidget *window = MleStage::g_theStage->getWindow();
+        if ( window )
+            _mlPlayer->sendWindow(window->winId());
+#else
 	    Window window = MleStage::g_theStage->getWindow();
-#endif /* __sgi */
+        if ( window )
+            _mlPlayer->sendWindow(window);
+#endif
+#endif /* __linux__ */
 #if defined(WIN32)
 		HWND window = MleStage::g_theStage->getWindow();
-#endif /* WIN32 */
 	    if ( window )
-		    _mlPlayer->sendWindow(window);
+            _mlPlayer->sendWindow(window->winId());
+#endif /* WIN32 */
 
 	    // Register player with stage.
 	    _mlPlayer->registerWithStage();
@@ -389,13 +401,18 @@ InitEnv(int argc,char **argv)
 	    _mlPlayer->setToolsInitFinishedCB(toolsInitFinished);
 	}
 
-#if defined(__sgi) || defined(__linux__)
+#if defined(__linux__)
+#ifdef Q_OS_UNIX
+    // Qt on Linux platform.
+    // Todo: manage close button event here.
+#else
 	Display* display = MleStage::g_theStage->getDisplay();
 
 	// Initialize event message for window close button 'x'.
 	Atom wmDeleteMessage = XInternAtom(display, "WM_DELETE_WINDOW", True);
 	XSetWMProtocols(display, MleStage::g_theStage->getWindow(), &wmDeleteMessage, 1);
-#endif /* __sgi */
+#endif /* Q_OS_UNIX */
+#endif /* __linux__ */
 
 	if ( _mlPlayer == NULL )
 	{
@@ -480,7 +497,7 @@ Cycle(void)
 int 
 MainLoop(void)
 {
-#if defined(__sgi) || defined(__linux__)
+#if defined(__linux__)
     // Loop forever.
     for(;;)
 	{
@@ -573,7 +590,7 @@ MainLoop(void)
 			    break;
 		}
     }
-#endif /* __sgi */
+#endif /* __linux__ */
 #if defined(WIN32)
 	// Loop forever.
     for(;;)
@@ -720,7 +737,7 @@ static void toolsInitFinished(void *)
 	fflush(stdout);
 }
 
-#if defined(__sgi) || defined(__linux__)
+#if defined(__linux__)
 extern "C" {
 // The following Iris gl stub functions are needed because
 // we are using IL version 2.x which is based on the Iris gl library.
@@ -740,4 +757,4 @@ gversion(char[12])
     return 0;
 }
 } /* extern "C" */
-#endif /* __sgi */
+#endif /* __linux__ */
