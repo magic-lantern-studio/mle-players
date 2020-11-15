@@ -151,7 +151,7 @@ InitEnv(int argc,char **argv)
 		system(cmd);
 		sleep(20);
 	}
-#endif /* __sgi */
+#endif /* __linux__ */
 
 #if defined(MLE_DEBUG)
 	// The following interrupt is very useful for debugging the player.
