@@ -16,7 +16,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 unix: MLE_ROOT = /opt/MagicLantern
 
-INCLUDEPATH += $$PWD/../../../include /opt/MagicLantern/include /usr/local/include
+INCLUDEPATH += \
+    $$PWD/../../../include \
+    /opt/MagicLantern/include \
+    /usr/local/include
 
 DEFINES += \
     MLE_NOT_DLL \
@@ -41,6 +44,7 @@ LIBS = \
         $(MLE_ROOT)/lib/mle/qt/rehearsal/libMleIvStage.so \
         $(MLE_ROOT)/lib/mle/qt/rehearsal/libMle2dRole.so \
         $(MLE_ROOT)/lib/mle/qt/rehearsal/libMle2dSet.so \
+        $(MLE_ROOT)/lib/mle/qt/rehearsal/libmlloaders.so \
         -lCoin -lSoQt
 
 # Default rules for deployment.
