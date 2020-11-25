@@ -1,4 +1,4 @@
-QT += widgets
+QT += widgets opengl
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
@@ -15,6 +15,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 unix: MLE_ROOT = /opt/MagicLantern
+# Suppress the default RPATH
+unix: QMAKE_LFLAGS_RPATH=
+#unix: QMAKE_LFLAGS += "-Wl,-rpath,\'$(MLE_ROOT)/lib/mle/qt/rehearsal\' -Wl,-rpath,\'$(MLE_ROOT)/lib\' -Wl,-rpath,\'/home/msm/bin/Qt/5.15.0/gcc_64/lib\'"
+unix: QMAKE_LFLAGS += "-Wl,-rpath,$(MLE_ROOT)/lib/mle/qt/rehearsal -Wl,-rpath,$(MLE_ROOT)/lib -Wl,-rpath,/home/msm/bin/Qt/5.15.0/gcc_64/lib"
+#unix: QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN\'"
 
 INCLUDEPATH += \
     $$PWD/../../../include \

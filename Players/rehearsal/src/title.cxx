@@ -194,7 +194,7 @@ InitEnv(int argc,char **argv)
 	//	- standalone reh. player, restarted (after envvar setting)
 	//	- from Magic Lantern (authoring tools)
 	char *mlPlayMode = getenv(MLEPLAY_EXEC_MODE);
-	if (!mlPlayMode)
+    if (! mlPlayMode)
 	{
 	    // Being run as standalone player, since our obscure envvar
 	    // isn't set --- we decide on the stage,
@@ -285,13 +285,12 @@ InitEnv(int argc,char **argv)
 	{
 	    // Restarted mlplay standalone with augmented ld lib path.
 
-	    // mvo 3/25/96: load dwp before creating stage and
-	    // load a local workprint.
+        // Load DWP before creating stage using a local workprint.
 	    _mlWorkprint = mlLoadWorkprint(argv[1]);
 
 	    if ( _mlWorkprint == NULL )
 	    {
-		    printf("ERROR: %s is not a valid workprint "
+            printf("player ERROR: %s is not a valid workprint "
 			   "file (on restart).\n", argv[1]);
 		    exit(-1);
 	    }
@@ -303,16 +302,23 @@ InitEnv(int argc,char **argv)
 	    const MleStageClass *sc = MleStageClass::find(stageClass);
 	    if(! sc)
 		{
-			printf("ERROR mlplay: failed to load stage '%s'\n",
+            printf("player ERROR: mlplay mode: failed to load stage '%s'.\n",
 				   stageClass);
 			exit(-1);
 	    }
 
 	    // Create the stage.
-	    sc->createInstance();
-	    if (!MleStage::g_theStage)
+        MleStage *stage = sc->createInstance();
+        if (stage == NULL)
+        {
+            printf("player ERROR: mlplay mode: failed to create stage '%s'.\n",
+                   stageClass);
+            exit(-1);
+        }
+        // The singleton should also be set during stage creation.
+        if (! MleStage::g_theStage)
 	    {
-			printf("ERROR mlplay: failed to create stage '%s'\n",
+            printf("player ERROR: mlplay mode: global stage '%s' not set.\n",
 				   stageClass);
 			exit(-1);
 	    }
