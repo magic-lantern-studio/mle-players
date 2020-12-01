@@ -30,7 +30,8 @@ DEFINES += \
     MLE_NOT_DLL \
     MLE_DIGITAL_WORKPRINT \
     MLE_REHEARSAL \
-    MLE_SOQT
+    MLE_SOQT \
+    MLE_QT
 
 SOURCES += \
         $$PWD/../../../src/main.cxx \

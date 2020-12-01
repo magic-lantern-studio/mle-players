@@ -42,9 +42,11 @@
 //
 // COPYRIGHT_END
 
+#ifdef MLE_SOQT
+#include <QApplication>
+#endif /* MLE_SOQT */
 
 // Include Magic Lantern header files.
-// #include "mle/mlTypes.h"
 #include "mle/mlMalloc.h"
 #include "mle/mlAssert.h"
 #include "mle/mlDebug.h"
@@ -58,6 +60,9 @@ extern MlBoolean CleanupEnv(void);
 
 // Global reference to Magic Lantern Debug Manager
 MleDebugMgrP *g_mlDebugMgr;
+#ifdef MLE_SOQT
+QApplication *g_mlQApp;
+#endif /* MLE_SOQT */
 
 
 // Inventor Workprint Player.
@@ -72,6 +77,11 @@ main(int argc, char *argv[])
         exit(1);
     }
 
+#ifdef MLE_SOQT
+    // Create an Qt application framework for player.
+    g_mlQApp = new QApplication(argc, argv);
+#endif /* MLE_SOQT */
+
     // Create a new title environment.
     g_theTitle = (MleDirector*)mlMalloc(sizeof(MleDirector));
     MLE_ASSERT(g_theTitle);
@@ -85,6 +95,11 @@ main(int argc, char *argv[])
 
     // Clean up title environment.
     CleanupEnv();
+
+#ifdef MLE_SOQT
+    // Clean up Qt application framework.
+    delete g_mlQApp;
+#endif /* MLE_SOQT */
 
     return(0);
 }

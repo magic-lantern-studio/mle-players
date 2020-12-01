@@ -53,7 +53,9 @@
 #ifdef MLE_SOQT
 #include <QtGlobal>
 #include <QWidget>
-#endif
+
+#include <Inventor/Qt/SoQt.h>
+#endif /* MLE_SOQT */
 #endif /* __linux__ */
 #if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
@@ -89,8 +91,10 @@
 
 // Include Magic Lantern Player header files.
 #include <mle/MlePlayer.h>
-#include <mle/MleIvStage.h>
-
+#ifdef MLE_SOQT
+#include <mle/ivstage.h>
+#include <mle/QtStageWindow.h>
+#endif /* MLE_SOQT */
 
 // Environment variable used for parent app telling us how to run.
 #define MLEPLAY_EXEC_MODE    "__MLE_PLAY_MODE__"
@@ -105,7 +109,7 @@ extern MLE_RUNTIME_API MlePlayer *_mlPlayer;
 //extern MLE_DWP_API MleDwpItem *_mlWorkprint;
 MleDwpItem *_mlWorkprint;
 
-// XXX this is somewhat of a hack.  Basically, this flag determines when
+// Todo: this is somewhat of a hack.  Basically, this flag determines when
 // it is safe to go into stage edit mode if you are using a player.  Another
 // way to do this is to have the player send a message when it is finished
 // sending over group info.
@@ -143,7 +147,7 @@ InitEnv(int argc,char **argv)
 	// Start a debugger.
 #if defined(__linux__)
 	char *dbxenv = getenv("MLE_DBX");
-	if ( dbxenv && strstr(dbxenv,argv[0]) )
+    if (dbxenv && strstr(dbxenv,argv[0]))
 	{
 		char cmd[128];
         // Todo: Find a replacement for winterm and dbx.
@@ -169,8 +173,8 @@ InitEnv(int argc,char **argv)
 	MleGroup::initClass();
 
 	// Note that scheduler and stage are created before we attach
-	//   to the tools.  This is because the tools may immediately
-	//   request a group load.
+    // to the tools.  This is because the tools may immediately
+    // request a group load.
 
 	// Scheduler initialization.
 	g_theTitle->m_theScheduler = new MleScheduler;
@@ -181,17 +185,16 @@ InitEnv(int argc,char **argv)
 	// at will.
 	g_theTitle->m_theScheduler->init();
 
-#if defined(WIN32)
-	g_theTitle->m_theEventMgr = new MleEventDispatcher();
-#endif /* WIN32 */
+    // Add the event dispatcher.
+    g_theTitle->m_theEventMgr = new MleEventDispatcher();
 
 	_mlPlayer = NULL;
 
 	// Decide on the mode we're being run in, by checking an
-	// obscure env var set only by mlplay and Magic Lantern before
-	// starting or restarting mlplay. The modes are:
-	//	- standalone reh. player
-	//	- standalone reh. player, restarted (after envvar setting)
+    // obscure env var set only by the player and Magic Lantern
+    // before starting or restarting. The modes are:
+    //	- standalone rehearsal player
+    //	- standalone rehearsal player, restarted (after envvar setting)
 	//	- from Magic Lantern (authoring tools)
 	char *mlPlayMode = getenv(MLEPLAY_EXEC_MODE);
     if (! mlPlayMode)
@@ -207,7 +210,7 @@ InitEnv(int argc,char **argv)
 	    // Load a local workprint.
 	    _mlWorkprint = mlLoadWorkprint(argv[1]);
 
-	    if ( _mlWorkprint == NULL )
+        if (_mlWorkprint == NULL)
 	    {
 			printf("%s: ERROR: %s is not a valid workprint file.\n",
 				argv[0], argv[1]);
@@ -224,7 +227,7 @@ InitEnv(int argc,char **argv)
 	    // property roles, sets, etc.
         // Todo: use rld root or ld lib path?
 	    char *currPath = getenv("LD_LIBRARY_PATH");
-	    if (!currPath)
+        if (! currPath)
 			currPath = (char *)"";
 	    char addPath[100];
 	    sprintf(addPath, "/usr/local/lib");
@@ -278,7 +281,7 @@ InitEnv(int argc,char **argv)
 #endif /* WIN32 */
 	    
 	    // If we reach here, the exec failed.
-	    printf("ERROR mlplay: failed to re-exec\n");
+        printf("player ERROR: failed to re-exec\n");
 	    exit(-1);
 	}
 	else if (strcmp(mlPlayMode, "mlplay") == 0)
@@ -288,7 +291,7 @@ InitEnv(int argc,char **argv)
         // Load DWP before creating stage using a local workprint.
 	    _mlWorkprint = mlLoadWorkprint(argv[1]);
 
-	    if ( _mlWorkprint == NULL )
+        if (_mlWorkprint == NULL)
 	    {
             printf("player ERROR: %s is not a valid workprint "
 			   "file (on restart).\n", argv[1]);
@@ -300,7 +303,7 @@ InitEnv(int argc,char **argv)
 
 	    // Look up the stage class.
 	    const MleStageClass *sc = MleStageClass::find(stageClass);
-	    if(! sc)
+        if (! sc)
 		{
             printf("player ERROR: mlplay mode: failed to load stage '%s'.\n",
 				   stageClass);
@@ -325,7 +328,7 @@ InitEnv(int argc,char **argv)
 	    
 	    // Set a discriminator for entire session, 
 	    // so we only deal with items
-	    // from this class of stage (e.g., "brender")
+        // from this class of stage (e.g., "opengl")
 	    MleDwpTagAllDiscriminator *allDiscrim = 
 			    new MleDwpTagAllDiscriminator;
 	    allDiscrim->addTag("rehearsal");
@@ -334,6 +337,12 @@ InitEnv(int argc,char **argv)
 
 	    free(stageName);
 	    free(stageClass);
+
+#ifdef MLE_SOQT
+        // Set top-level widget so we can manage the window hierarchy.
+        QtStageWindow * topLevelWidget = new QtStageWindow();
+        ((MleIvStage *)stage)->setShellParent(topLevelWidget);
+#endif /* MLE_SOQT */
 
 	    // Finish initializing the stage.
 	    MleStage::g_theStage->init();
@@ -347,7 +356,7 @@ InitEnv(int argc,char **argv)
 	    _mlPlayer = MlePlayer::create(argc,argv);
 	    if ( !_mlPlayer )
 	    {
-			printf("ERROR mlplay: can't create MlePlayer\n");
+            printf("player ERROR: magiclantern mode: can't create MlePlayer\n");
 			exit(-1);
 	    }
 
@@ -361,16 +370,16 @@ InitEnv(int argc,char **argv)
 	    const MleStageClass *sc = MleStageClass::find(stageClass);
 	    if (! sc)
 		{
-			printf("ERROR mlplay: failed to load stage '%s'\n",
+            printf("player ERROR: magiclantern mode: failed to load stage '%s'\n",
 				   stageClass);
 			exit(-1);
 	    }
 
 	    // Create the stage.
 	    sc->createInstance();
-	    if (!MleStage::g_theStage)
+        if (! MleStage::g_theStage)
 	    {
-			printf("ERROR mlplay: failed to create stage '%s'\n",
+            printf("player ERROR: magiclantern mode: failed to create stage '%s'\n",
 				   stageClass);
 			exit(-1);
 	    }
@@ -420,11 +429,11 @@ InitEnv(int argc,char **argv)
 #endif /* Q_OS_UNIX */
 #endif /* __linux__ */
 
-	if ( _mlPlayer == NULL )
+    if (_mlPlayer == NULL)
 	{
-		// Load only the boot scene for stand alone rehearsal
+        // Load only the boot scene for standalone rehearsal
 		// player.
-		(void) mlLoadBootScene( _mlWorkprint );
+        (void) mlLoadBootScene(_mlWorkprint);
 	}
 
 	// Initialize quit flag.
@@ -440,10 +449,10 @@ selectStage(MleDwpItem *top,
 	    char **callerStageName, 
 	    char **callerStageClass)
 {
-    // Create stage based on wp's first rehearsal stage.
+    // Create stage based on DWP's first rehearsal stage.
     MleDwpTagDiscriminator *discrim = 
 		new MleDwpTagDiscriminator;
-    discrim->addTag("rehearsal");	// XXX - should become a constant.
+    discrim->addTag("rehearsal");	// Todo: should become a constant.
     top->setDiscriminator(discrim);
     MleDwpFinder stageFinder(MleDwpStage::typeId);
     MleDwpStage *stage = 
@@ -453,8 +462,8 @@ selectStage(MleDwpItem *top,
 
     if (stage == NULL)
     {
-		printf("WARN: no stage in this wp; during grace period, assuming "
-			"an Inventor rehearsal stage.\n");
+        printf("player WARN: no stage in this DWP; during grace period, assuming "
+              "an Inventor rehearsal stage.\n");
 		*callerStageName = strdup("inventor");
 		*callerStageClass = strdup("MleIvStage");
     }
@@ -504,7 +513,7 @@ int
 MainLoop(void)
 {
 #if defined(__linux__)
-    // Loop forever.
+    // Loop forever until the quit flag is true.
     for(;;)
 	{
 		// Set up select.
@@ -512,7 +521,7 @@ MainLoop(void)
 		FD_ZERO(&fdset);
 
 		// First listen for messages from the Player.
-		if ( _mlPlayer )
+        if (_mlPlayer)
 		{
 			// Create the select arguments.
 			FD_SET(_mlPlayer->getFD(),&fdset);
@@ -554,7 +563,7 @@ MainLoop(void)
 				}
 
 				// Check for quit.
-				if (_mlPlayer->hasQuit()) break;
+                if (_mlPlayer->hasQuit()) goto quit;
 			}
 
 			// mvo 1/28/96: subverts crash where you hit play/pause
@@ -593,12 +602,18 @@ MainLoop(void)
 		  
 		    // Quit on title request.
 		    if (g_theTitle->m_quit)
-			    break;
+                goto quit;
 		}
     }
+
+quit:
+#ifdef MLE_SOQT
+    SoQt::done();
+#endif /* MLE_SOQT */
+
 #endif /* __linux__ */
 #if defined(WIN32)
-	// Loop forever.
+    // Loop forever until quit flag is true.
     for(;;)
 	{
 		// Set up select.
@@ -690,7 +705,7 @@ MainLoop(void)
 			SoWin::doIdleTasks();
 
 		// Cycle if stage is not in edit mode.
-		if (!MleStage::g_theStage->getEditing())
+        if (! MleStage::g_theStage->getEditing())
 		{
 
 		    Cycle();
@@ -702,14 +717,15 @@ MainLoop(void)
 	}
 
 quit:
-
     SoWin::done();
 #endif /* WIN32 */
+
     return 0;
 }
 
 MlBoolean CleanupEnv(void)
 {
+    // Todo: Move SoXX::done to here.
 	return TRUE;
 }
 
