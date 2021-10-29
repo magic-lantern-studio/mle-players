@@ -6,15 +6,13 @@
  *
  * This file implements functionality for reading a Digital Workprint
  * and playing it in a standalone player.
- *
- * @author Mark S. Millard
  */
 
 // COPYRIGHT_BEGIN
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2003-2020 Wizzer Works
+// Copyright (c) 2003-2021 Wizzer Works
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +43,7 @@
 
 // Include system header files.
 #include <stdio.h>
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
 #include <unistd.h>
 //#include <bstring.h>
 #include <sys/time.h>
@@ -145,7 +143,7 @@ MlBoolean
 InitEnv(int argc,char **argv)
 {
 	// Start a debugger.
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
 	char *dbxenv = getenv("MLE_DBX");
     if (dbxenv && strstr(dbxenv,argv[0]))
 	{
@@ -243,6 +241,28 @@ InitEnv(int argc,char **argv)
 	    sprintf(newPath, "LD_LIBRARY_PATH=%s;%s", currPath, addPath);
 	    putenv(newPath);
 #endif /* __linux__ */
+#if defined(__APPLE__)
+        // Stage name is used to set DYLD_LIBRARY_PATH for
+        // mlplay processes, so they select correct roles,
+        // property roles, sets, etc.
+        // Todo: use rld root or ld lib path?
+        char *currPath = getenv("DYLD_LIBRARY_PATH");
+        if (! currPath)
+            currPath = (char *)"";
+        char addPath[100];
+        sprintf(addPath, "/usr/local/lib");
+        // Todo: need a better policy for finding the rehearsal player components.
+        // It use to be
+        //   sprintf(addPath, "/usr/mle/%s/rehearsal", stageName);
+        // But we should use a linux standard, like
+        //   sprintf(addPath, "/usr/local/mle/%s/rehearsal", stageName);
+
+        // Append addition to existing library path.
+        // Todo: maybe should prepend ours
+        char *newPath = new char[strlen(currPath)+strlen(addPath) + 50];
+        sprintf(newPath, "DYLD_LIBRARY_PATH=%s;%s", currPath, addPath);
+        putenv(newPath);
+#endif
 #if defined(WIN32)
 		char *currPath = getenv("PATH");
 	    if (! currPath)
@@ -273,7 +293,7 @@ InitEnv(int argc,char **argv)
 	    sprintf(s, "%s=mlplay", MLEPLAY_EXEC_MODE);
 	    putenv(s);
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
 	    execvp(argv[0], argv);
 #endif /* __linux__ */
 #if defined(WIN32)
@@ -389,7 +409,7 @@ InitEnv(int argc,char **argv)
 	    MleStage::g_theStage->init();
 	    MleStage::g_theStage->setEditing(0);
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
 #ifdef Q_OS_UNIX
         QWidget *window = MleStage::g_theStage->getWindow();
         if ( window )
@@ -416,7 +436,7 @@ InitEnv(int argc,char **argv)
 	    _mlPlayer->setToolsInitFinishedCB(toolsInitFinished);
 	}
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
 #ifdef Q_OS_UNIX
     // Qt on Linux platform.
     // Todo: manage close button event here.
@@ -512,7 +532,7 @@ Cycle(void)
 int 
 MainLoop(void)
 {
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
     // Loop forever until the quit flag is true.
     for(;;)
 	{
@@ -759,7 +779,7 @@ static void toolsInitFinished(void *)
 	fflush(stdout);
 }
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
 extern "C" {
 // The following Iris gl stub functions are needed because
 // we are using IL version 2.x which is based on the Iris gl library.

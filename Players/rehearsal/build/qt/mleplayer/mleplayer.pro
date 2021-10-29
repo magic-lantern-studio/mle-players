@@ -37,6 +37,7 @@ SOURCES += \
         $$PWD/../../../src/main.cxx \
         $$PWD/../../../src/title.cxx
 
+unix:!macx {
 LIBS = \
         -L$(MLE_ROOT)/lib/mle/qt/rehearsal -lmlert \
         -L$(MLE_ROOT)/lib/mle/qt/rehearsal -lmleatk \
@@ -52,6 +53,25 @@ LIBS = \
         $(MLE_ROOT)/lib/mle/qt/rehearsal/libMle2dSet.so \
         $(MLE_ROOT)/lib/mle/qt/rehearsal/libmlloaders.so \
         -lCoin -lSoQt
+}
+
+macx {
+LIBS = \
+        -L$(MLE_ROOT)/lib/mle/qt/rehearsal -lmlert \
+        -L$(MLE_ROOT)/lib/mle/qt/rehearsal -lmleatk \
+        -L$(MLE_ROOT)/lib -lDWP -lmlmath -lmlutil \
+        -L$(MLE_ROOT)/lib/mle/qt.rehearsal -livroles \
+        $(MLE_ROOT)/lib/mle/qt/rehearsal/libMle3dRole.dylib \
+        $(MLE_ROOT)/lib/mle/qt/rehearsal/libMle3dColorMapMediaRef.dylib \
+        $(MLE_ROOT)/lib/mle/qt/rehearsal/libMle3dModelMediaRef.dylib \
+        $(MLE_ROOT)/lib/mle/qt/rehearsal/libMle3dTextureMapMediaRef.dylib \
+        $(MLE_ROOT)/lib/mle/qt/rehearsal/libMle3dSet.dylib \
+        $(MLE_ROOT)/lib/mle/qt/rehearsal/libMleIvStage.dylib \
+        $(MLE_ROOT)/lib/mle/qt/rehearsal/libMle2dRole.dylib \
+        $(MLE_ROOT)/lib/mle/qt/rehearsal/libMle2dSet.dylib \
+        $(MLE_ROOT)/lib/mle/qt/rehearsal/libmlloaders.dylib \
+        -L/usr/local/lib -lCoin -lSoQt
+}
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
