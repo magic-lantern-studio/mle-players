@@ -259,8 +259,10 @@ InitEnv(int argc,char **argv)
 
         // Append addition to existing library path.
         // Todo: maybe should prepend ours
-        char *newPath = new char[strlen(currPath)+strlen(addPath) + 50];
-        sprintf(newPath, "DYLD_LIBRARY_PATH=%s;%s", currPath, addPath);
+        char *newPath = new char[strlen(currPath) + strlen(addPath) + 50];
+        //sprintf(newPath, "DYLD_LIBRARY_PATH=%s:%s", currPath, addPath);
+        //sprintf(newPath, "DYLD_LIBRARY_PATH=%s:%s", addPath, currPath);
+        sprintf(newPath, "DYLD_LIBRARY_PATH=%s", currPath);
         putenv(newPath);
 #endif
 #if defined(WIN32)
