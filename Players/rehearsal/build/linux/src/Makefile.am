@@ -22,6 +22,6 @@ player_LDADD = \
 	$(MLE_ROOT)/lib/mle/rehearsal/Mle2dRole.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/Mle2dSet.so \
 	$(MLE_ROOT)/lib/mle/rehearsal/libmlloaders.so \
-	-lCoin -lSoXt -lXmu -lX11 -lXext
+	-L/usr/local/lib -lCoin -lSoXt -lXmu -lX11 -lXext
 
 player_LDFLAGS = -Wl,-rpath,$(MLE_ROOT)/lib/mle/rehearsal:$(MLE_ROOT)/lib
