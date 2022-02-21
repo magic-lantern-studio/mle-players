@@ -5,25 +5,33 @@
  * @ingroup MlePlayer
  *
  * This file implements the program entry points for a standalone player.
- *
- * @author Mark S. Millard
- * @date May 5, 2003
  */
 
 // COPYRIGHT_BEGIN
 //
-//  Copyright (C) 2000-2018  Wizzer Works
+// The MIT License (MIT)
 //
-//  Wizzer Works makes available all content in this file ("Content").
-//  Unless otherwise indicated below, the Content is provided to you
-//  under the terms and conditions of the Common Public License Version 1.0
-//  ("CPL"). A copy of the CPL is available at
+// Copyright (c) 2003-2021 Wizzer Works
 //
-//      http://opensource.org/licenses/cpl1.0.php
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-//  For purposes of the CPL, "Program" will mean the Content.
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
 //
-//  For information concerning this Makefile, contact Mark S. Millard,
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+//  For information concerning this header file, contact Mark S. Millard,
 //  of Wizzer Works at msm@wizzerworks.com.
 //
 //  More information concerning Wizzer Works may be found at
@@ -32,9 +40,11 @@
 //
 // COPYRIGHT_END
 
+#ifdef MLE_SOQT
+#include <QApplication>
+#endif /* MLE_SOQT */
 
 // Include Magic Lantern header files.
-// #include "mle/mlTypes.h"
 #include "mle/mlMalloc.h"
 #include "mle/mlAssert.h"
 #include "mle/mlDebug.h"
@@ -48,6 +58,9 @@ extern MlBoolean CleanupEnv(void);
 
 // Global reference to Magic Lantern Debug Manager
 MleDebugMgrP *g_mlDebugMgr;
+#ifdef MLE_SOQT
+QApplication *g_mlQApp;
+#endif /* MLE_SOQT */
 
 
 // Inventor Workprint Player.
@@ -62,6 +75,11 @@ main(int argc, char *argv[])
         exit(1);
     }
 
+#ifdef MLE_SOQT
+    // Create an Qt application framework for player.
+    g_mlQApp = new QApplication(argc, argv);
+#endif /* MLE_SOQT */
+
     // Create a new title environment.
     g_theTitle = (MleDirector*)mlMalloc(sizeof(MleDirector));
     MLE_ASSERT(g_theTitle);
@@ -75,6 +93,11 @@ main(int argc, char *argv[])
 
     // Clean up title environment.
     CleanupEnv();
+
+#ifdef MLE_SOQT
+    // Clean up Qt application framework.
+    delete g_mlQApp;
+#endif /* MLE_SOQT */
 
     return(0);
 }
