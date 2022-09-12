@@ -25,3 +25,17 @@ player_LDADD = \
 	-L/usr/local/lib -lCoin -lSoXt -lXmu -lX11 -lXext
 
 player_LDFLAGS = -Wl,-rpath,$(MLE_ROOT)/lib/mle/rehearsal:$(MLE_ROOT)/lib
+
+
+if HAVE_LOG4CXX
+#player_SOURCES += \
+#    source.h \
+#    source.cpp
+	
+player_CPPFLAGS += $(LOG4CXX_CFLAGS)
+#player_CPPFLAGS += -DLINUX -D_REENTRANT -D_GNU_SOURCE -I/usr/local/include -I/usr/include/apr-1.0
+
+player_LDFLAGS += -Wl,-rpath=/usr/local/lib
+player_LDADD += $(LOG4CXX_LIBS)
+#player_LDADD += -L/usr/local/lib -llog4cxx
+endif
