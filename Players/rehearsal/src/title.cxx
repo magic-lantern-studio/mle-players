@@ -152,7 +152,11 @@ InitEnv(int argc,char **argv)
         // Todo: Find a replacement for winterm and dbx.
 		sprintf(cmd,"winterm -c dbx -p %d",getpid());
 		int status = system(cmd);
-		// Todo: Report status here; if failed, then return MlFalse.
+        // If failed, then return false.
+        if (status == -1) {
+            // Todo: Report status here.
+            return ML_FALSE;
+        }
 
 		sleep(20);
 	}
