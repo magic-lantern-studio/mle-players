@@ -19,7 +19,11 @@ unix {
 }
 # Suppress the default RPATH
 unix: QMAKE_LFLAGS_RPATH=
-unix: QMAKE_LFLAGS += "-Wl,-rpath,$${MLE_ROOT}/lib/mle/qt/rehearsal -Wl,-rpath,$${MLE_ROOT}/lib -Wl,-rpath,/usr/lib/qt5/bin"
+unix: QMAKE_LFLAGS += \
+    "-Wl,-rpath,$${MLE_ROOT}/lib/mle/qt/rehearsal \
+     -Wl,-rpath,$${MLE_ROOT}/lib/mle/rehearsal \
+     -Wl,-rpath,$${MLE_ROOT}/lib \
+     -Wl,-rpath,/usr/lib/qt5/bin"
 #unix: QMAKE_LFLAGS += "-Wl,-rpath,\'\$$ORIGIN\'"
 
 INCLUDEPATH += \
