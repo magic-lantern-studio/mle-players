@@ -79,6 +79,8 @@ LIBS = \
 }
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/MagicLantern/bin
+unix {
+    target.path = /opt/MagicLantern/bin
+    INSTALLS += target
+}
 #!isEmpty(target.path): INSTALLS += target
