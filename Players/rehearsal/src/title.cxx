@@ -432,7 +432,7 @@ InitEnv(int argc,char **argv)
 #if defined(WIN32)
 		HWND window = MleStage::g_theStage->getWindow();
 	    if ( window )
-            _mlPlayer->sendWindow(window->winId());
+            _mlPlayer->sendWindow(window);
 #endif /* WIN32 */
 
 	    // Register player with stage.
