@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2003-2021 Wizzer Works
+// Copyright (c) 2003-2024 Wizzer Works
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,8 @@ extern int MainLoop(void);
 extern MlBoolean CleanupEnv(void);
 
 // Global reference to Magic Lantern Debug Manager
-MleDebugMgrP *g_mlDebugMgr;
+MLE_UTIL_API MleDebugMgrP *g_mlDebugMgr;
+
 #ifdef MLE_SOQT
 QApplication *g_mlQApp;
 #endif /* MLE_SOQT */

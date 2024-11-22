@@ -280,7 +280,7 @@ InitEnv(int argc,char **argv)
 		char *mleHomePath = getenv("MLE_HOME");
 		if (! mleHomePath)
         {
-			sprintf(addPath, "C:\\Program Files\\WizzerWorks\\MagicLantern\\bin\\rehearsal", stageName);
+			sprintf(addPath, "C:\\Program Files\\WizzerWorks\\MagicLantern\\bin\\rehearsal");
 		} else
 		{
 #if _WIN64
@@ -306,7 +306,12 @@ InitEnv(int argc,char **argv)
 	    execvp(argv[0], argv);
 #endif /* __linux__ */
 #if defined(WIN32)
-		_execvp(argv[0], argv);
+		intptr_t execStatus;
+		execStatus = _execvp(argv[0], argv);
+		if (execStatus == -1)
+		{
+			printf("%s: ERROR: _execStatus files: errno %d", argv[0], errno);
+		}
 #endif /* WIN32 */
 	    
 	    // If we reach here, the exec failed.
