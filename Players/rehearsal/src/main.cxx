@@ -40,6 +40,13 @@
 //
 // COPYRIGHT_END
 
+// Include system header files.
+#ifdef WIN32
+#include <windows.h>
+#endif
+#include <stdio.h>
+#include <string.h>
+
 #ifdef MLE_SOQT
 #include <QApplication>
 #endif /* MLE_SOQT */
@@ -48,7 +55,17 @@
 #include "mle/mlMalloc.h"
 #include "mle/mlAssert.h"
 #include "mle/mlDebug.h"
+#include "mle/mlTrace.h"
+#include "mle/mlFileio.h"
+#include <mle/MlePath.h>
 #include "mle/MleDirector.h"
+#ifdef WIN32
+#include "mle/mlGetOpt.h"
+#include <mle/MleWin32Path.h>
+#else
+#include <unistd.h>
+#include <mle/MleLinuxPath.h>
+#endif /* WIN32 */
 
 
 // Declare external references.
@@ -64,17 +81,125 @@ QApplication *g_mlQApp;
 #endif /* MLE_SOQT */
 
 
-// Inventor Workprint Player.
+// Argument structures for parser.
+typedef struct _pattern
+{
+	char            *str;
+	struct _pattern *next;
+} Pattern;
 
+typedef struct _ArgStruct
+{
+	char       *commandName;  /* Name of command. */
+	char       *workprint;    /* Name of workprint file to execute. */
+	int        verbose;       /* Be verbose. */
+} ArgStruct;
+
+const char *usage_str = "\
+Syntax:   player [-v] <workprint>\n\
+\n\
+          -v                   Be verbose\n\
+          <workprint>          Digital Workprint\n\
+\n\
+Function: Play a Magic Lantern Digital Workprint.\n\
+\n\
+This application plays a Digital Workprint as defined by the specified workprint file.\n";
+
+// File descriptor for trace macros.
+FILE *g_traceFd;
+
+
+#ifdef WIN32
+static char *getCanonicalPath(char *path)
+{
+	char *cpath = NULL;
+	MleWin32Path *wpath = new MleWin32Path((MlChar *)path, true);
+	//cpath = strdup((char *)wpath->getPath());
+	cpath = _strdup((char *)wpath->getPath());
+	delete wpath;
+	return cpath;
+}
+#else
+static char *getCanonicalPath(char *path)
+{
+	return strdup(path);
+}
+#endif /* WIN32 */
+
+// Parse the input argements
+int parseArgs(int argc, char *argv[], ArgStruct *args)
+{
+	/* declare local variables */
+	int c;
+	int errflg;
+	extern char *optarg;
+	extern int optind;
+
+	errflg = 0;
+	while ((c = getopt(argc, argv, "v?")) != -1)
+	{
+		switch (c)
+		{
+		case 'v':
+			args->verbose = TRUE;
+			break;
+		case '?':
+			errflg++;
+		}
+	}
+
+	if (errflg)
+	{
+		(void)fprintf(stderr, "%s\n", usage_str);
+		return FALSE;
+	}
+
+	for (; optind < argc; optind++)
+	{
+		if (!args->workprint) {
+			args->workprint = getCanonicalPath(argv[optind]);
+		}
+		else {
+			fprintf(stderr, "%s\n", usage_str);
+			return FALSE;
+		}
+	}
+
+	/* If there is no specified workprint, complain. */
+	if (args->workprint == NULL)
+	{
+		fprintf(stderr, "%s\n", usage_str);
+		return FALSE;
+	}
+
+	/* Having made it to here implies that we have good arguments. */
+
+	return TRUE;
+}
+
+
+// Main entry point for Magic Lantern player.
 int
 main(int argc, char *argv[])
 {
-    // Parse arguments.
-    if ( argc < 2 )
-    {
-        fprintf(stderr, "Usage: %s workprint\n", argv[0]);
-        exit(1);
-    }
+	// Declare local variables.
+	ArgStruct args;
+
+	g_traceFd = mlFOpen("playerTrace.log", "a+");
+	MLE_TRACE_INFO(g_traceFd, Before arg parsing);
+
+	// Parse arguments.
+	args.commandName = argv[0];
+	args.workprint = NULL;
+	args.verbose = FALSE;
+	if (!parseArgs(argc, argv, &args))
+	{
+		MLE_TRACE_ERROR(g_traceFd, argument parsing error);
+		exit(1);
+	}
+	MLE_TRACE_INFO(g_traceFd, Successful arg parsing);
+
+	// TODO: Set verbosity levels.
 
 #ifdef MLE_SOQT
     // Create an Qt application framework for player.

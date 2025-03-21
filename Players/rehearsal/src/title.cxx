@@ -67,6 +67,8 @@
 // Include Magic Lantern Runtime Engine header files.
 #include <mle/mlTypes.h>
 #include <mle/mlErrno.h>
+#include <mle/mlFileio.h>
+#include <mle/mlTrace.h>
 #include <mle/MleDirector.h>
 #include <mle/MleLoad.h>
 #include <mle/MleScheduler.h>
@@ -107,6 +109,8 @@ extern MLE_RUNTIME_API MlePlayer *_mlPlayer;
 //extern MLE_DWP_API MleDwpItem *_mlWorkprint;
 MleDwpItem *_mlWorkprint;
 
+extern FILE *g_traceFd;
+
 // Todo: this is somewhat of a hack.  Basically, this flag determines when
 // it is safe to go into stage edit mode if you are using a player.  Another
 // way to do this is to have the player send a message when it is finished
@@ -142,6 +146,8 @@ int gettimeofday (struct timeval *tv, void *tz)
 MlBoolean 
 InitEnv(int argc,char **argv)
 {
+	MLE_TRACE_INFO(g_traceFd, In InitEnv);
+
 	// Start a debugger.
 #if defined(__linux__) || defined(__APPLE__)
 	char *dbxenv = getenv("MLE_DBX");
@@ -173,6 +179,7 @@ InitEnv(int argc,char **argv)
 #endif /* MLE_DEBUG */
 
 	// Workprint initialization.
+	MLE_TRACE_INFO(g_traceFd, Starting DWP initialization);
 	mleDwpInit();
 	MleScene::initClass();
 	MleGroup::initClass();
@@ -201,6 +208,7 @@ InitEnv(int argc,char **argv)
     //	- standalone rehearsal player
     //	- standalone rehearsal player, restarted (after envvar setting)
 	//	- from Magic Lantern (authoring tools)
+	MLE_TRACE_INFO(g_traceFd, Deciding play mode);
 	char *mlPlayMode = getenv(MLEPLAY_EXEC_MODE);
     if (! mlPlayMode)
 	{
@@ -211,8 +219,10 @@ InitEnv(int argc,char **argv)
 	    // Too bad this env var isn't interpreted dynamically...
 	    // Note: we have to exec to get LD_LIBRARY_PATH interpreted, 
 	    // can't fork.
+		MLE_TRACE_INFO(g_traceFd, Standalone play mode);
 	    
 	    // Load a local workprint.
+		MLE_TRACE_INFO(g_traceFd, Loading DWP);
 	    _mlWorkprint = mlLoadWorkprint(argv[1]);
 
         if (_mlWorkprint == NULL)
@@ -223,6 +233,7 @@ InitEnv(int argc,char **argv)
 	    }
 
 	    // Select a rehearsal stage.
+		MLE_TRACE_INFO(g_traceFd, Selecting Rehearsal Stage);
 	    char *stageName, *stageClass;
 	    selectStage(_mlWorkprint, &stageName, &stageClass);
 
@@ -306,6 +317,8 @@ InitEnv(int argc,char **argv)
 	    execvp(argv[0], argv);
 #endif /* __linux__ */
 #if defined(WIN32)
+		// In Windows, _execvp will not return unless there is an error.
+		MLE_TRACE_INFO(g_traceFd, Preparing to execvp);
 		intptr_t execStatus;
 		execStatus = _execvp(argv[0], argv);
 		if (execStatus == -1)
@@ -321,8 +334,10 @@ InitEnv(int argc,char **argv)
 	else if (strcmp(mlPlayMode, "mlplay") == 0)
 	{
 	    // Restarted mlplay standalone with augmented ld lib path.
+		MLE_TRACE_INFO(g_traceFd, mlplay standalone mode);
 
         // Load DWP before creating stage using a local workprint.
+		MLE_TRACE_INFO(g_traceFd, Loading DWP in mlplay mode);
 	    _mlWorkprint = mlLoadWorkprint(argv[1]);
 
         if (_mlWorkprint == NULL)
@@ -333,6 +348,7 @@ InitEnv(int argc,char **argv)
 	    }
 
 	    char *stageName, *stageClass;
+		MLE_TRACE_INFO(g_traceFd, Selecting Rehearsal Stage in mlplay mode);
 	    selectStage(_mlWorkprint, &stageName, &stageClass);
 
 	    // Look up the stage class.
@@ -379,12 +395,14 @@ InitEnv(int argc,char **argv)
 #endif /* MLE_SOQT */
 
 	    // Finish initializing the stage.
+		MLE_TRACE_INFO(g_traceFd, Initializing Stage in mlplay mode);
 	    MleStage::g_theStage->init();
 	}
 	else if (strcmp(mlPlayMode, "magiclantern") == 0)
 	{
 	    // Being run as secondary process from authoring tools
 	    // (scene ed, etc)
+		MLE_TRACE_INFO(g_traceFd, magiclantern play mode);
 
 	    // create the player.
 	    _mlPlayer = MlePlayer::create(argc,argv);
