@@ -1,0 +1,182 @@
+version: 1.0.{build}
+image: Ubuntu2204
+branches:
+  only:
+  - master
+
+# Set environment
+environment:
+  MLE_ROOT: /opt/MagicLantern
+
+# Install dependencies
+install:
+- sh: >-
+    sudo apt install libx11-dev;
+    sudo apt install libxt-dev;
+    sudo apt-get install -y libmotif-dev;
+    sudo apt-get install -y libxmu-dev;
+    sudo apt-get install -y libxpm-dev;
+    sudo apt-get install -y libfreeimage-dev;
+    sudo apt-get install -y cmake
+
+# Install Coin 4.x library dependency.
+- sh: >-
+    sudo apt-get install -y mesa-common-dev libglu1-mesa-dev freeglut3-dev;
+    sudo apt-get install -y libboost-dev;
+    sudo apt-get install -y libboost-all-dev;
+    git clone -q --recurse-submodules --branch magiclantern https://github.com/magic-lantern-studio/coin coin;
+    cmake -Hcoin -Bcoin_build -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DCOIN_BUILD_DOCUMENTATION=OFF -DCOIN_BUILD_TESTS=OFF;
+    cd coin_build;
+    make;
+    sudo make install
+- sh: >-
+    git clone -q --recurse-submodules --branch magiclantern https://github.com/magic-lantern-studio/soxt soxt;
+    cmake -Hsoxt -Bsoxt_build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_PREFIX_PATH="/usr/local" -DSOXT_BUILD_DOCUMENTATION=OFF;
+    cd soxt_build;
+    make;
+    sudo make install
+
+# Install Magic Lantern Utility library dependency.
+- sh: >-
+    sudo mkdir $MLE_ROOT;
+    git clone -q --branch=master https://github.com/magic-lantern-studio/mle-core-util.git /home/appveyor/projects/mle-core-util;
+    cd /home/appveyor/projects/mle-core-util/util/linux/build;
+    autoreconf --install;
+    ./configure;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Install Magic Lantern Math library dependency.
+- sh: >-
+    git clone -q --branch=master https://github.com/magic-lantern-studio/mle-core-math.git /home/appveyor/projects/mle-core-math;
+    cd /home/appveyor/projects/mle-core-math/math/linux/libmlmath;
+    autoreconf --install;
+    ./configure;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Install Magic Lantern Digital Workprint dependencies
+- sh: >-
+    git clone -q --branch=master https://github.com/magic-lantern-studio/mle-core-dwp.git /home/appveyor/projects/mle-core-dwp;
+    cd /home/appveyor/projects/mle-core-dwp/DigitalWorkprint/lib/linux;
+    autoreconf --install;
+    ./configure;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Install Magic Lantern Digital Playprint dependencies.
+- sh: >-
+    git clone -q --branch=master https://github.com/magic-lantern-studio/mle-core-dpp.git /home/appveyor/projects/mle-core-dpp;
+    cd /home/appveyor/projects/mle-core-dpp/DigitalPlayprint/lib/linux;
+    autoreconf --install;
+    ./configure;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Install Magic Lantern Runtime Engine dependency.
+- sh: >-
+    git clone -q --branch=master https://github.com/magic-lantern-studio/mle-core-mlert.git /home/appveyor/projects/mle-core-mlert;
+    cd /home/appveyor/projects/mle-core-mlert/mlert/linux/rehearsal;
+    autoreconf --install;
+    ./configure;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Install Magic Lantern Props dependencies.
+- sh: >-
+    git clone -q --branch=master https://github.com/magic-lantern-studio/mle-parts.git /home/appveyor/projects/mle-parts;
+    cd /home/appveyor/projects/mle-parts/Parts/props/linux;
+    autoreconf --install;
+    ./configure;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Build Magic Lantern Media Reference libraries.
+- sh: >-
+    cd /home/appveyor/projects/mle-parts/Parts/mediaref/inventor/build/linux/ivmref-rehearsal;
+    autoreconf --install;
+    ./configure;
+    make clean;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Build Magic Lantern Role libraries.
+- sh: >-
+    cd /home/appveyor/projects/mle-parts/Parts/roles/inventor/build/linux/ivrole-rehearsal;
+    autoreconf --install;
+    ./configure;
+    make clean;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Build Magic Lantern Set libraries.
+- sh: >-
+    cd /home/appveyor/projects/mle-parts/Parts/sets/inventor/build/ivset-rehearsal;
+    autoreconf --install;
+    ./configure;
+    make clean;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Build Magic Lantern Stage libraries.
+- sh: >-
+    cd /home/appveyor/projects/mle-parts/Parts/stages/inventor/build/linux/ivstage-rehearsal;
+    autoreconf --install;
+    ./configure;
+    make clean;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Build Magic Lantern Authoring Toolkit.
+build_script:
+- sh: >-
+    git clone -q --branch=master https://github.com/magic-lantern-studio/mle-atk.git /home/appveyor/projects/mle-atk;
+    cd /home/appveyor/projects/mle-atk/ATK/linux/rehearsal;
+    autoreconf --install;
+    ./configure;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Custom script to build Magic Lantern Players using autoconf tools.
+    cd /home/appveyor/projects/mle-players/Players/rehearsal/build/linux;
+    autoreconf --install;
+    ./configure;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
+# Clean up dependencies before generating deployment package.
+- sh: >-
+    cd /home/appveyor/projects/mle-core-util/util/linux/build;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-core-math/math/linux/libmlmath;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-core-dwp/DigitalWorkprint/lib/linux;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-core-dpp/DigitalPlayprint/lib/linux;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-core-mlert/mlert/linux/rehearsal;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-parts/Parts/props/linux;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-parts/Parts/mediaref/inventor/build/linux/ivmref-rehearsal;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-parts/Parts/roles/inventor/build/linux/ivrole-rehearsal;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-parts/Parts/sets/inventor/build/ivset-rehearsal;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-parts/Parts/stages/inventor/build/linux/ivstages-rehearsal;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-atk/ATK/linux/rehearsal;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall
+
+# Custom script to create an .zip file containing the Magic Lantern
+# Player artifacts.
+after_build:
+- sh: >-
+    cd /home/appveyor/projects/mle-players;
+    7z a mlplayers.zip $MLE_ROOT
+
+# Define artifacts to push to AppVeyor
+artifacts:
+- path: mlplayers.zip
+  name: mle-players
