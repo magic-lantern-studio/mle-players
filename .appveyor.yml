@@ -138,6 +138,7 @@ build_script:
     sudo MLE_ROOT=$MLE_ROOT make install
 
 # Custom script to build Magic Lantern Players using autoconf tools.
+- sh: >-
     cd /home/appveyor/projects/mle-players/Players/rehearsal/build/linux;
     autoreconf --install;
     ./configure;
