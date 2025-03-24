@@ -128,7 +128,6 @@ install:
     sudo MLE_ROOT=$MLE_ROOT make install
 
 # Build Magic Lantern Authoring Toolkit.
-build_script:
 - sh: >-
     git clone -q --branch=master https://github.com/magic-lantern-studio/mle-atk.git /home/appveyor/projects/mle-atk;
     cd /home/appveyor/projects/mle-atk/ATK/linux/rehearsal;
@@ -138,7 +137,6 @@ build_script:
     sudo MLE_ROOT=$MLE_ROOT make install
 
 # Build Magic Lantern libmlloader library.
-build_script:
 - sh: >-
     git clone -q --branch=master https://github.com/magic-lantern-studio/mle-loaders.git /home/appveyor/projects/mle-loaders;
     cd /home/appveyor/projects/mle-loaders/Loaders/build/rehearsal;
