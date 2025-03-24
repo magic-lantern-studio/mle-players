@@ -138,7 +138,7 @@ install:
 
 # Build Magic Lantern libmlloader library.
 - sh: >-
-    git clone -q --branch=master https://github.com/magic-lantern-studio/mle-loaders.git /home/appveyor/projects/mle-loaders;
+    git clone -q --branch=main https://github.com/magic-lantern-studio/mle-loaders.git /home/appveyor/projects/mle-loaders;
     cd /home/appveyor/projects/mle-loaders/Loaders/build/rehearsal;
     autoreconf --install;
     ./configure;
