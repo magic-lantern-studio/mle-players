@@ -137,6 +137,16 @@ build_script:
     make;
     sudo MLE_ROOT=$MLE_ROOT make install
 
+# Build Magic Lantern libmlloader library.
+build_script:
+- sh: >-
+    git clone -q --branch=master https://github.com/magic-lantern-studio/mle-loaders.git /home/appveyor/projects/mle-loaders;
+    cd /home/appveyor/projects/mle-loaders/Loaders/build/rehearsal;
+    autoreconf --install;
+    ./configure;
+    make;
+    sudo MLE_ROOT=$MLE_ROOT make install
+
 # Custom script to build Magic Lantern Players using autoconf tools.
 - sh: >-
     cd /home/appveyor/projects/mle-players/Players/rehearsal/build/linux;
@@ -168,6 +178,8 @@ build_script:
     cd /home/appveyor/projects/mle-parts/Parts/stages/inventor/build/linux/ivstages-rehearsal;
     sudo MLE_ROOT=$MLE_ROOT make uninstall;
     cd /home/appveyor/projects/mle-atk/ATK/linux/rehearsal;
+    sudo MLE_ROOT=$MLE_ROOT make uninstall;
+    cd /home/appveyor/projects/mle-loaders/Loaders/build/rehearsal;
     sudo MLE_ROOT=$MLE_ROOT make uninstall
 
 # Custom script to create an .zip file containing the Magic Lantern
