@@ -11,7 +11,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2003-2024 Wizzer Works
+// Copyright (c) 2003-2025 Wizzer Works
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@
 // COPYRIGHT_END
 
 // Include system header files.
-#ifdef WIN32
+#ifdef _WINDOWS
 #include <windows.h>
 #endif
 #include <stdio.h>
@@ -59,13 +59,13 @@
 #include "mle/mlFileio.h"
 #include <mle/MlePath.h>
 #include "mle/MleDirector.h"
-#ifdef WIN32
+#ifdef _WINDOWS
 #include "mle/mlGetOpt.h"
 #include <mle/MleWin32Path.h>
 #else
 #include <unistd.h>
 #include <mle/MleLinuxPath.h>
-#endif /* WIN32 */
+#endif /* _WINDOWS */
 
 
 // Declare external references.
@@ -109,7 +109,7 @@ This application plays a Digital Workprint as defined by the specified workprint
 FILE *g_traceFd;
 
 
-#ifdef WIN32
+#ifdef _WINDOWS
 static char *getCanonicalPath(char *path)
 {
 	char *cpath = NULL;
@@ -124,7 +124,7 @@ static char *getCanonicalPath(char *path)
 {
 	return strdup(path);
 }
-#endif /* WIN32 */
+#endif /* _WINDOWS */
 
 // Parse the input argements
 int parseArgs(int argc, char *argv[], ArgStruct *args)

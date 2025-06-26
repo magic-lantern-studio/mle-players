@@ -12,7 +12,7 @@
 //
 // The MIT License (MIT)
 //
-// Copyright (c) 2003-2024 Wizzer Works
+// Copyright (c) 2003-2025 Wizzer Works
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -55,14 +55,14 @@
 #include <Inventor/Qt/SoQt.h>
 #endif /* MLE_SOQT */
 #endif /* __linux__ */
-#if defined(WIN32)
+#if defined(_WINDOWS)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 #include <process.h>
 
 #include <Inventor/Win/SoWin.h>
-#endif /** WIN32 */
+#endif /** _WINDOWS */
 
 // Include Magic Lantern Runtime Engine header files.
 #include <mle/mlTypes.h>
@@ -105,7 +105,8 @@
 //   the global _mlWorkprint.  If the tools are active, workprint information
 //   (and other interaction) is accessed through a communications object
 //   referenced by the global _mlPlayer.
-extern MLE_RUNTIME_API MlePlayer *_mlPlayer;
+//extern MLE_RUNTIME_API MlePlayer *_mlPlayer;
+MlePlayer* _mlPlayer;
 //extern MLE_DWP_API MleDwpItem *_mlWorkprint;
 MleDwpItem *_mlWorkprint;
 
@@ -124,7 +125,7 @@ static void frameAdvance(void *);
 static void toolsInitFinished(void *);
 
 
-#if defined(WIN32)
+#if defined(_WINDOWS)
 // Todo: determine if tz parameter can be struct timezone * to match linux.
 // Timezone is not used, so it is not important that it matches for Windows
 // platform.
@@ -141,7 +142,7 @@ int gettimeofday (struct timeval *tv, void *tz)
 
 	return(0);
 }
-#endif /* WIN32 */
+#endif /* _WINDOWS */
 
 MlBoolean 
 InitEnv(int argc,char **argv)
@@ -172,10 +173,10 @@ InitEnv(int argc,char **argv)
 	// The following interrupt is very useful for debugging the player.
 	// Don't remove, just comment out when not debugging.
 
-#if defined(WIN32)
+#if defined(_WINDOWS)
 	//__asm int 3h; Note that this is not compliant with x64 architecture.
 	__debugbreak();
-#endif /* WIN32 */
+#endif /* _WINDOWS */
 #endif /* MLE_DEBUG */
 
 	// Workprint initialization.
@@ -200,6 +201,7 @@ InitEnv(int argc,char **argv)
     // Add the event dispatcher.
     g_theTitle->m_theEventMgr = new MleEventDispatcher();
 
+	// Initialize global reference to player.
 	_mlPlayer = NULL;
 
 	// Decide on the mode we're being run in, by checking an
@@ -283,7 +285,7 @@ InitEnv(int argc,char **argv)
         sprintf(newPath, "DYLD_LIBRARY_PATH=%s", currPath);
         putenv(newPath);
 #endif
-#if defined(WIN32)
+#if defined(_WINDOWS)
 		char *currPath = getenv("PATH");
 	    if (! currPath)
 			currPath = "";
@@ -305,7 +307,7 @@ InitEnv(int argc,char **argv)
 	    sprintf(newPath, "PATH=%s;%s", currPath, addPath);
 		//fprintf (stdout, "%s\n", newPath);
 	    putenv(newPath);
-#endif /* WIN32 */
+#endif /* _WINDOWS */
 	    // Now we re-exec ourselves, so that the
 	    // augmented LD_LIBRARY_PATH gets used...
 	    // Set env var telling ourselves how to run on next exec
@@ -316,7 +318,7 @@ InitEnv(int argc,char **argv)
 #if defined(__linux__) || defined(__APPLE__)
 	    execvp(argv[0], argv);
 #endif /* __linux__ */
-#if defined(WIN32)
+#if defined(_WINDOWS)
 		// In Windows, _execvp will not return unless there is an error.
 		MLE_TRACE_INFO(g_traceFd, Preparing to execvp);
 		intptr_t execStatus;
@@ -325,7 +327,7 @@ InitEnv(int argc,char **argv)
 		{
 			printf("%s: ERROR: _execStatus files: errno %d", argv[0], errno);
 		}
-#endif /* WIN32 */
+#endif /* _WINDOWS */
 	    
 	    // If we reach here, the exec failed.
         printf("player ERROR: failed to re-exec\n");
@@ -404,13 +406,16 @@ InitEnv(int argc,char **argv)
 	    // (scene ed, etc)
 		MLE_TRACE_INFO(g_traceFd, magiclantern play mode);
 
-	    // create the player.
+	    // Create the player.
 	    _mlPlayer = MlePlayer::create(argc,argv);
 	    if ( !_mlPlayer )
 	    {
             printf("player ERROR: magiclantern mode: can't create MlePlayer\n");
 			exit(-1);
-	    }
+		}
+		else {
+			// Set player callbacks for runtime engine usage.
+		}
 
         // Todo: We probably really want to take this out of here.
 	    // Stage initialization
@@ -452,11 +457,11 @@ InitEnv(int argc,char **argv)
             _mlPlayer->sendWindow(window);
 #endif
 #endif /* __linux__ */
-#if defined(WIN32)
+#if defined(_WINDOWS)
 		HWND window = MleStage::g_theStage->getWindow();
 	    if ( window )
             _mlPlayer->sendWindow(window);
-#endif /* WIN32 */
+#endif /* _WINDOWS */
 
 	    // Register player with stage.
 	    _mlPlayer->registerWithStage();
@@ -516,13 +521,23 @@ selectStage(MleDwpItem *top,
     {
         printf("player WARN: no stage in this DWP; during grace period, assuming "
               "an Inventor rehearsal stage.\n");
+#if defined(_WINDOWS)
+		*callerStageName = _strdup("inventor");
+		*callerStageClass = _strdup("MleIvStage");
+#else
 		*callerStageName = strdup("inventor");
 		*callerStageClass = strdup("MleIvStage");
-    }
+#endif /* _WINDOWS */
+	}
     else
     {
+#if defined(_WINDOWS)
+		*callerStageName = _strdup(stage->getName());
+		*callerStageClass = _strdup(stage->getStageClass());
+#else
 		*callerStageName = strdup(stage->getName());
 		*callerStageClass = strdup(stage->getStageClass());
+#endif
     }
 }
 
@@ -664,7 +679,7 @@ quit:
 #endif /* MLE_SOQT */
 
 #endif /* __linux__ */
-#if defined(WIN32)
+#if defined(_WINDOWS)
     // Loop forever until quit flag is true.
     for(;;)
 	{
@@ -770,7 +785,7 @@ quit:
 
 quit:
     SoWin::done();
-#endif /* WIN32 */
+#endif /* _WINDOWS */
 
     return 0;
 }
