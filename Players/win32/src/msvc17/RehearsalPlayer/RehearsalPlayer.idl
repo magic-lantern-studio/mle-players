@@ -1,0 +1,57 @@
+// RehearsalPlayer.idl : IDL source for RehearsalPlayer
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (RehearsalPlayer.tlb) and marshalling code.
+
+#include "olectl.h"
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(86DAA0D2-477F-4A02-9BB2-8D4C412FE2C9),
+	dual,
+	nonextensible,
+	helpstring("IAuStage Interface"),
+	pointer_default(unique)
+]
+interface IAuStage : IDispatch{
+	[propget, bindable, requestedit, id(DISPID_HWND)]
+	HRESULT HWND([out, retval]LONG_PTR* pHWND);
+	[id(1), helpstring("method init")] HRESULT init([in] BSTR cmdline);
+	[id(2), helpstring("method run")] HRESULT run(void);
+	[id(3), helpstring("method cleanup")] HRESULT cleanup(void);
+	[id(4), helpstring("method isRunning")] HRESULT isRunning([out] BOOL * running);
+	[id(5), helpstring("method setDigitalWorkprint")] HRESULT setDigitalWorkprint([in] BSTR dwp);
+	[id(6), helpstring("method startPlayer")] HRESULT startPlayer([in] BSTR cmdline);
+};
+
+[
+	uuid(D2A024F0-2F7C-47EB-96C0-4EEA28DB8515),
+	version(1.0),
+	helpstring("RehearsalPlayer 1.0 Type Library")
+]
+library RehearsalPlayerLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(D5DA5D83-BB73-423F-8739-37AF9B6D713C),
+		helpstring("_IAuStageEvents Interface")
+	]
+	dispinterface _IAuStageEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(65C00DBE-B4E9-442E-AF68-513887FDDA90),
+		control,
+		helpstring("AuStage Class")
+	]
+	coclass AuStage
+	{
+		[default] interface IAuStage;
+		[default, source] dispinterface _IAuStageEvents;
+	};
+};
