@@ -290,7 +290,7 @@ InitEnv(int argc,char **argv)
 	    if (! currPath)
 			currPath = "";
 		char addPath[256];
-		char *mleHomePath = getenv("MLE_HOME");
+		char *mleHomePath = getenv("MLE_ROOT");
 		if (! mleHomePath)
         {
 			sprintf(addPath, "C:\\Program Files\\WizzerWorks\\MagicLantern\\bin\\rehearsal");
