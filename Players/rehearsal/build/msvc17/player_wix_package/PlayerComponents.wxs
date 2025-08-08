@@ -1,0 +1,9 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+	<Fragment>
+		<ComponentGroup Id="PlayerComponents" Directory="MLEROOT">
+			<Component Id="rehearsal" Directory="BIN64_REHEARSAL" Guid="{BC03B769-D6E6-4EB2-B7FF-0D958F82A036}">
+				<File Id="player_rehearsal" Source="$(var.player.TargetPath)"/>
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>
