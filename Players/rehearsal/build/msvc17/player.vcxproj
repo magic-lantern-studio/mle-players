@@ -151,6 +151,9 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugTools|x64'">true</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>playerd</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
       <TypeLibraryName>.\Release/player.tlb</TypeLibraryName>
@@ -270,7 +273,7 @@ copy Win32\Release\player.exe $(MLE_HOME)\bin\player.exe
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>mleatk.lib;DWP.lib;ivroles.lib;Mle2dSet.lib;Mle3dSet.lib;Mle3dRole.lib;MleIvStage.lib;Mle2dRole.lib;mlert.lib;mlmath.lib;mlutil.lib;coin4.lib;sowin1.lib;odbc32.lib;odbccp32.lib;wsock32.lib;opengl32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>mleatk.lib;DWP.lib;ivroles.lib;Mle2dSet.lib;Mle3dSet.lib;Mle3dRole.lib;MleIvStage.lib;Mle2dRole.lib;mlert.lib;mlmath.lib;mlutil.lib;Coin4.lib;SoWin1.lib;odbc32.lib;odbccp32.lib;wsock32.lib;opengl32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(Platform)\$(Configuration)/player.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(MLE_ROOT)/lib64/rehearsal;$(COINDIR)/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -441,7 +444,7 @@ copy Win32\Debug\player.exe $(MLE_HOME)\bin\player.exe
       <PreprocessorDefinitions>MLE_REHEARSAL;MLE_DIGITAL_WORKPRINT;MLE_DEBUG;MLE_NOT_UTIL_DLL;MLE_NOT_MATH_DLL;MLE_RUNTIME_DLL;MLE_DWP_DLL;COIN_DLL;SOWIN_DLL;_WINDOWS;_DEBUG;_CONSOLE;ML_MATH_DEBUG=1;ML_FIXED_POINT=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)/player.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)/playerd.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(Platform)\$(Configuration)/</AssemblerListingLocation>
       <ObjectFileName>$(Platform)\$(Configuration)/</ObjectFileName>
       <ProgramDataBaseFileName>$(Platform)\$(Configuration)/</ProgramDataBaseFileName>
@@ -456,12 +459,12 @@ copy Win32\Debug\player.exe $(MLE_HOME)\bin\player.exe
     </ResourceCompile>
     <Link>
       <AdditionalOptions>/section:".GLOBALS,rws" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>mleatkd.lib;DWPd.lib;ivrolesd.lib;Mle2dSetd.lib;Mle3dSetd.lib;Mle3dRoled.lib;MleIvStaged.lib;Mle2dRoled.lib;mlertd.lib;mlmathd.lib;mlutild.lib;coin4d.lib;sowin1d.lib;odbc32.lib;odbccp32.lib;wsock32.lib;opengl32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(Platform)\$(Configuration)/player.exe</OutputFile>
+      <AdditionalDependencies>mleatkd.lib;DWPd.lib;ivrolesd.lib;Mle2dSetd.lib;Mle3dSetd.lib;Mle3dRoled.lib;MleIvStaged.lib;Mle2dRoled.lib;mlertd.lib;mlmathd.lib;mlutild.lib;Coin4d.lib;SoWin1d.lib;odbc32.lib;odbccp32.lib;wsock32.lib;opengl32.lib;psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(Platform)\$(Configuration)\playerd.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(MLE_ROOT)/lib64/rehearsal;$(COINDIR)/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(Platform)\$(Configuration)/player.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(Platform)\$(Configuration)\playerd.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <Bscmake>
@@ -471,7 +474,7 @@ copy Win32\Debug\player.exe $(MLE_HOME)\bin\player.exe
     <PostBuildEvent>
       <Message>Install Executable</Message>
       <Command>mkdir $(MLE_ROOT)\bin64
-copy x64\Debug\player.exe $(MLE_ROOT)\bin64\player.exe
+copy x64\Debug\playerd.exe $(MLE_ROOT)\bin64\playerd.exe
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
