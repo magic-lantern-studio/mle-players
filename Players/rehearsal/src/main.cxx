@@ -126,7 +126,7 @@ static char *getCanonicalPath(char *path)
 }
 #endif /* _WINDOWS */
 
-// Parse the input argements
+// Parse the input arguments
 int parseArgs(int argc, char *argv[], ArgStruct *args)
 {
 	/* declare local variables */

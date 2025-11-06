@@ -256,7 +256,7 @@ copy Win32\Release\player.exe $(MLE_HOME)\bin\player.exe
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>$(MLE_ROOT)/include;$(COINDIR)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>MLE_REHEARSAL;MLE_DIGITAL_WORKPRINT;MLE_NOT_UTIL_DLL;MLE_NOT_MATH_DLL;MLE_RUNTIME_DLL;MLE_DWP_DLL;COIN_DLL;SOWIN_DLL;NDEBUG;_WINDOWS;_CONSOLE;ML_MATH_DEBUG=0;ML_FIXED_POINT=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MLE_REHEARSAL;MLE_DIGITAL_WORKPRINT;MLE_UTIL_DLL;MLE_MATH_DLL;MLE_RUNTIME_DLL;MLE_DWP_DLL;COIN_DLL;SOWIN_DLL;NDEBUG;_WINDOWS;_CONSOLE;ML_MATH_DEBUG=0;ML_FIXED_POINT=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -286,8 +286,8 @@ copy Win32\Release\player.exe $(MLE_HOME)\bin\player.exe
     </Bscmake>
     <PostBuildEvent>
       <Message>Install Executable</Message>
-      <Command>mkdir $(MLE_ROOT)\bin64
-copy x64\Release\player.exe $(MLE_ROOT)\bin64\player.exe
+      <Command>mkdir $(MLE_ROOT)\bin64\rehearsal
+copy x64\Release\player.exe $(MLE_ROOT)\bin64\rehearsal\player.exe
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -441,7 +441,7 @@ copy Win32\Debug\player.exe $(MLE_HOME)\bin\player.exe
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(MLE_ROOT)\include;$(COINDIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>MLE_REHEARSAL;MLE_DIGITAL_WORKPRINT;MLE_DEBUG;MLE_NOT_UTIL_DLL;MLE_NOT_MATH_DLL;MLE_RUNTIME_DLL;MLE_DWP_DLL;COIN_DLL;SOWIN_DLL;_WINDOWS;_DEBUG;_CONSOLE;ML_MATH_DEBUG=1;ML_FIXED_POINT=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MLE_REHEARSAL;MLE_DIGITAL_WORKPRINT;MLE_DEBUG;MLE_UTIL_DLL;MLE_MATH_DLL;MLE_RUNTIME_DLL;MLE_DWP_DLL;COIN_DLL;SOWIN_DLL;_WINDOWS;_DEBUG;_CONSOLE;ML_MATH_DEBUG=1;ML_FIXED_POINT=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeaderOutputFile>$(Platform)\$(Configuration)/playerd.pch</PrecompiledHeaderOutputFile>
@@ -473,8 +473,8 @@ copy Win32\Debug\player.exe $(MLE_HOME)\bin\player.exe
     </Bscmake>
     <PostBuildEvent>
       <Message>Install Executable</Message>
-      <Command>mkdir $(MLE_ROOT)\bin64
-copy x64\Debug\playerd.exe $(MLE_ROOT)\bin64\playerd.exe
+      <Command>mkdir $(MLE_ROOT)\bin64\rehearsal
+copy x64\Debug\playerd.exe $(MLE_ROOT)\bin64\rehearsal\playerd.exe
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
